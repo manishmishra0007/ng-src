@@ -1,0 +1,119 @@
+﻿<h1 *ngIf="isAddMode">Add Request</h1>
+<h1 *ngIf="!isAddMode">Edit Request</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="memberId">Created By</label>
+            <input *ngIf="isAddMode" type="text" readonly class="form-control" [value]="loggedInUserName" />   
+            <input *ngIf="!isAddMode" type="text" readonly class="form-control" formControlName="createdBy"/>  
+            <input *ngIf="!isAddMode" hidden type="text" readonly class="form-control" formControlName="memberId" />        
+        </div>
+        <div class="form-group col">
+            <label for="onBehalfOf">On Behalf Of</label>
+            <select formControlName="onBehalfOf" class="form-control">
+                <option *ngFor="let obo of onBehalfOf"  
+                    value={{obo.id}}>  
+                    {{obo.firstName}}  
+                </option> 
+            </select>           
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="departmentId">
+                Department
+            </label>
+            <select formControlName="departmentId" class="form-control">
+                <option selected value="-1">Select department</option>
+                <option *ngFor="let depart of departments"  
+                        value={{depart.departmentId}}>  
+                    {{depart.departmentName}}  
+                </option> 
+            </select>
+        </div>
+        <div class="form-group col">
+            <label for="serviceRequestId">
+                Request Type
+            </label>
+            <select formControlName="serviceRequestId" class="form-control">
+                <option selected value="-1">Select request type</option>
+                <option *ngFor="let request of requestTypes"  
+                        value={{request.serviceRequestTypeId}}>  
+                    {{request.serviceRequestTypeName}} 
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="serviceRequestName">Request Name</label>
+            <input type="text" formControlName="serviceRequestName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.serviceRequestName.errors }" />
+            <div *ngIf="submitted && f.serviceRequestName.errors" class="invalid-feedback">
+                <div *ngIf="f.serviceRequestName.errors.required">Service request name is required</div>
+            </div>
+        </div>
+        <div class="form-group col">
+            <label for="status">
+                Status
+            </label>
+            <select formControlName="status" class="form-control">
+                <option *ngFor="let status of statuses"  
+                        value={{status.statusId}}>  
+                    {{status.name}}  
+                </option> 
+            </select>             
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="assignedTo">Assigned To</label>                     
+            <select formControlName="assignedTo" class="form-control">
+                <option *ngFor="let assign of assignedTo"  
+                    value={{assign.id}}>  
+                    {{assign.firstName}}  
+                </option> 
+            </select>   
+        </div>
+        <div class="form-group col">
+            <label for="isApprovalNeeded">
+                Is Approval Needed
+            </label>
+            <select formControlName="isApprovalNeeded" class="form-control">
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+            </select>             
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="approver">Approver</label>   
+            <select formControlName="approver" class="form-control">
+                <option *ngFor="let approver of approvers"  
+                    value={{approver.id}}>  
+                    {{approver.firstName}}  
+                </option> 
+            </select>                  
+        </div>   
+        <div class="form-group col"></div>            
+    </div>  
+    
+    <div class="form-row">        
+        <div class="form-group col">
+            <label for="serviceDescriptionName">
+                Description
+            </label>
+            <textarea formControlName="serviceDescriptionName" rows="10" class="form-control textarea" [ngClass]="{ 'is-invalid': submitted && f.serviceDescriptionName.errors }" >
+
+            </textarea>           
+            <div *ngIf="submitted && f.serviceDescriptionName.errors" class="invalid-feedback">
+                <div *ngIf="f.serviceDescriptionName.errors.required">Service request description is required</div>
+            </div>
+        </div>        
+    </div> 
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Save
+        </button>
+        <a routerLink="/requests" class="btn btn-link">Cancel</a>
+    </div>
+</form>

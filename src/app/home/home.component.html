@@ -1,0 +1,15 @@
+﻿<div class="p-4">
+    <div class="container">
+        <h1>Hi {{user.firstName}}!</h1>
+        <div *ngIf="isAdmin" class="card-body">
+            <p>
+                <a routerLink="/users"><img src="./assets/members.webp" height="150px" width="150px"><br><span>Manage portal members</span></a>                
+            </p>
+        </div>
+        <div class="card-body">
+            <p>
+                <a routerLink="/requests"><img src="./assets/complaints.jpg" height="150px" width="150px"><br><br><span>Manage requests</span></a>                
+            </p>
+        </div>
+    </div>    
+</div>

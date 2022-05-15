@@ -1,0 +1,42 @@
+<h1>Requests</h1>
+<a routerLink="add" class="btn btn-sm btn-success mb-2">Add Request</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width: 10%">Request No.</th>
+            <th style="width: 10%">Request Name</th>
+            <!-- description will show up in tool tip of name -->
+            <!-- <th style="width: 10%">Description</th> -->
+            <th style="width: 10%">Raised By</th>
+            <th style="width: 10%">Department</th> 
+            <th style="width: 10%">On Behalf Of</th>
+            <th style="width: 10%">Assigned To</th> 
+            <!--if approval needed this column will have value -->       
+            <th style="width: 10%">Approver</th>       
+            <th style="width: 10%">Status</th>    
+            <th style="width: 10%">Created/Last Modified</th>      
+            <th style="width: 10%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let request of requests">
+            <td>{{request.transactionId}}</td>            
+            <td>{{request.serviceRequestName}}</td>
+            <td>{{request.createdBy}}</td>
+            <td>{{request.departmentName}}</td>
+            <td>{{request.onBehalfOfName}}</td>
+            <td>{{request.assignedToName}}</td>
+            <td>{{request.approverName}}</td>
+            <td>{{request.statusName}}</td>
+            <td>{{request.dateCreated | date}} / {{request.dateModified | date}}</td>
+            <td style="white-space: nowrap">
+                <a routerLink="edit/{{request.transactionId}}" class="btn btn-sm btn-primary mr-1">Edit</a>                
+            </td>
+        </tr>
+        <tr *ngIf="!requests">
+            <td colspan="4" class="text-center">
+                <span class="spinner-border spinner-border-lg align-center"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
