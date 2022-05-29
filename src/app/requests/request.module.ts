@@ -6,12 +6,14 @@ import { RequestRoutingModule } from './request-routing.module';
 import { LayoutComponent } from './layout.component';
 import { RequestListComponent } from './request-list.component';
 import { AddEditComponent } from './add-edit.component';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        RequestRoutingModule
+        RequestRoutingModule,
+        MatIconModule
     ],
     declarations: [
         LayoutComponent,

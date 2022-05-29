@@ -1,10 +1,12 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 
 import { AccountService, AlertService, RequestService } from '@app/_services';
 import { Status, Department, RequestTypes, Request, User } from '@app/_models';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class AddEditComponent implements OnInit {
@@ -22,6 +24,12 @@ export class AddEditComponent implements OnInit {
     loggedInUserId: string;
     loggedInUserName: string;
     loggedinUser: User;
+    @Input()
+    requiredFileType:string;
+
+    fileName = '';
+    uploadProgress:number;
+    uploadSub: Subscription;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -29,7 +37,8 @@ export class AddEditComponent implements OnInit {
         private router: Router,
         private accountService: AccountService,
         private alertService: AlertService,
-        private requestService: RequestService
+        private requestService: RequestService,
+        private http: HttpClient
     ) {
         this.loggedinUser = this.accountService.userValue;  
         this.loggedInUserId = this.loggedinUser.id; 
@@ -126,6 +135,40 @@ export class AddEditComponent implements OnInit {
         } else {
             this.updateRequest();
         }
+    }
+
+    onFileSelected(event) {
+        const file:File = event.target.files[0];
+      
+        if (file) {
+            this.fileName = file.name;
+            const formData = new FormData();
+            formData.append("thumbnail", file);
+
+            const upload$ = this.http.post("/api/thumbnail-upload", formData, {
+                reportProgress: true,
+                observe: 'events'
+            })
+            .pipe(
+                finalize(() => this.reset())
+            );
+          
+            this.uploadSub = upload$.subscribe(event => {
+              if (event.type == HttpEventType.UploadProgress) {
+                this.uploadProgress = Math.round(100 * (event.loaded / event.total));
+              }
+            })
+        }
+    }
+
+    cancelUpload() {
+        this.uploadSub.unsubscribe();
+        this.reset();
+    }
+
+    reset() {
+        this.uploadProgress = null;
+        this.uploadSub = null;
     }
 
     private createRequest() {

@@ -107,8 +107,39 @@
             <div *ngIf="submitted && f.serviceDescriptionName.errors" class="invalid-feedback">
                 <div *ngIf="f.serviceDescriptionName.errors.required">Service request description is required</div>
             </div>
-        </div>        
+        </div>   
+        <div class="form-group col">
+            
+            <input type="file" class="file-input"
+       [accept]="requiredFileType"
+       (change)="onFileSelected($event)" #fileUpload>
+
+<div class="file-upload">
+
+   {{fileName || "No file uploaded yet."}}
+
+    <button mat-mini-fab color="primary" class="upload-btn"
+      (click)="fileUpload.click()">
+        <mat-icon>attach_file</mat-icon>
+
+    </button>
+
+</div>
+
+<div class="progress">
+
+  <mat-progress-bar class="progress-bar" mode="determinate"
+                    [value]="uploadProgress" *ngIf="uploadProgress">
+
+  </mat-progress-bar>
+
+  <mat-icon class="cancel-upload" (click)="cancelUpload()" 
+            *ngIf="uploadProgress">delete_forever</mat-icon>
+
+</div>
+        </div>     
     </div> 
+    
     <div class="form-group">
         <button [disabled]="loading" class="btn btn-primary">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
