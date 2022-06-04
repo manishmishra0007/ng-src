@@ -1,12 +1,12 @@
-﻿import { Component, Input, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { finalize, first } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
-import { AccountService, AlertService, RequestService } from '@app/_services';
+import { AccountService, AlertService, RequestService, UploadFileService } from '@app/_services';
 import { Status, Department, RequestTypes, Request, User } from '@app/_models';
-import { HttpClient, HttpEventType } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class AddEditComponent implements OnInit {
@@ -24,12 +24,11 @@ export class AddEditComponent implements OnInit {
     loggedInUserId: string;
     loggedInUserName: string;
     loggedinUser: User;
-    @Input()
-    requiredFileType:string;
 
-    fileName = '';
-    uploadProgress:number;
-    uploadSub: Subscription;
+    progress = 0;
+    message = '';
+    fileInfos: Observable<any>;
+    file: File = null;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -38,7 +37,7 @@ export class AddEditComponent implements OnInit {
         private accountService: AccountService,
         private alertService: AlertService,
         private requestService: RequestService,
-        private http: HttpClient
+        private uploadService: UploadFileService
     ) {
         this.loggedinUser = this.accountService.userValue;  
         this.loggedInUserId = this.loggedinUser.id; 
@@ -49,7 +48,7 @@ export class AddEditComponent implements OnInit {
 
     ngOnInit() {
         this.id = this.route.snapshot.params['id'];
-        this.isAddMode = !this.id;                
+        this.isAddMode = !this.id;                        
 
         this.form = this.formBuilder.group({
             memberId: [],
@@ -113,6 +112,8 @@ export class AddEditComponent implements OnInit {
                     .pipe(first())
                     .subscribe(x => this.form.patchValue(x.find(x => x.transactionId.toString() == this.id)));
             }
+
+        //this.fileInfos = this.uploadService.getFiles();
     }
 
     // convenience getter for easy access to form fields
@@ -135,40 +136,6 @@ export class AddEditComponent implements OnInit {
         } else {
             this.updateRequest();
         }
-    }
-
-    onFileSelected(event) {
-        const file:File = event.target.files[0];
-      
-        if (file) {
-            this.fileName = file.name;
-            const formData = new FormData();
-            formData.append("thumbnail", file);
-
-            const upload$ = this.http.post("/api/thumbnail-upload", formData, {
-                reportProgress: true,
-                observe: 'events'
-            })
-            .pipe(
-                finalize(() => this.reset())
-            );
-          
-            this.uploadSub = upload$.subscribe(event => {
-              if (event.type == HttpEventType.UploadProgress) {
-                this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-              }
-            })
-        }
-    }
-
-    cancelUpload() {
-        this.uploadSub.unsubscribe();
-        this.reset();
-    }
-
-    reset() {
-        this.uploadProgress = null;
-        this.uploadSub = null;
     }
 
     private createRequest() {
@@ -236,4 +203,19 @@ export class AddEditComponent implements OnInit {
                 }
             });
     }
+
+    selectFile(event): void {        
+        this.file = event.target.files[0]          
+      }
+
+      upload(): void {
+
+        this.progress = 0; 
+        this.uploadService.upload(this.file).subscribe(
+            resp => {
+                alert("Uploaded")
+              });
+        this.file = undefined;
+
+      }
 }

@@ -93,7 +93,19 @@
                 </option> 
             </select>                  
         </div>   
-        <div class="form-group col"></div>            
+        <div class="form-group col">
+            <label for="filesuploaded">
+                List of Files uploaded
+            </label>            
+            <ul
+              class="list-group list-group-flush"
+              *ngFor="let file of fileInfos | async"
+            >
+              <li class="list-group-item">
+                <a href="{{ file.url }}">{{ file.name }}</a>
+              </li>
+            </ul>  
+        </div>              
     </div>  
     
     <div class="form-row">        
@@ -107,39 +119,36 @@
             <div *ngIf="submitted && f.serviceDescriptionName.errors" class="invalid-feedback">
                 <div *ngIf="f.serviceDescriptionName.errors.required">Service request description is required</div>
             </div>
-        </div>   
-        <div class="form-group col">
-            
-            <input type="file" class="file-input"
-       [accept]="requiredFileType"
-       (change)="onFileSelected($event)" #fileUpload>
-
-<div class="file-upload">
-
-   {{fileName || "No file uploaded yet."}}
-
-    <button mat-mini-fab color="primary" class="upload-btn"
-      (click)="fileUpload.click()">
-        <mat-icon>attach_file</mat-icon>
-
-    </button>
-
-</div>
-
-<div class="progress">
-
-  <mat-progress-bar class="progress-bar" mode="determinate"
-                    [value]="uploadProgress" *ngIf="uploadProgress">
-
-  </mat-progress-bar>
-
-  <mat-icon class="cancel-upload" (click)="cancelUpload()" 
-            *ngIf="uploadProgress">delete_forever</mat-icon>
-
-</div>
-        </div>     
-    </div> 
-    
+        </div>                      
+    </div>     
+    <div class="form-row">
+        <label class="btn btn-default">
+            <input type="file" id="formFile" (change)="selectFile($event)" />
+          </label>
+          <button class="btn btn-success btn-sm" style="width: 75px;height: 30px;margin-top: 5px;" (click)="upload()">
+             Upload 
+          </button>
+          <div class="alert" role="alert">{{ message }}</div>
+    </div>
+    <!-- 
+        [disabled]="!selectedFiles"
+        <div class="form-row">
+        <div *ngIf="currentFile" class="progress">
+            <div
+              class="progress-bar progress-bar-info progress-bar-striped"
+              role="progressbar"
+              attr.aria-valuenow="{{ progress }}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [ngStyle]="{ width: progress + '%' }"
+            >
+              {{ progress }}%
+            </div>
+          </div>
+    </div> -->
+    <div class="form-row">
+        &nbsp;
+    </div>    
     <div class="form-group">
         <button [disabled]="loading" class="btn btn-primary">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>

@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   //apiUrl: 'http://localhost:4000'
-  apiUrl: 'https://localhost:44313'
+  apiUrl: 'http://self.regurcalls.vip'
 };
 
 /*
