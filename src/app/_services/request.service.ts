@@ -117,4 +117,19 @@ export class RequestService {
 
         return this.http.get<[RequestTypes]>(`${environment.apiUrl}/api/Master/GetServiceRequestTypes`, options);
     }
+
+    DownloadFile(fileURI: string): Observable<Blob> {
+        let headers = new HttpHeaders(
+            {
+                //'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'method': 'GET',
+                'Authorization': localStorage.getItem('JWTToken')                
+            }
+        );
+        let options = { headers: headers };
+        return this.http.get(`${environment.apiUrl}/api/FileManager/download?fileUrl=${fileURI}`, {
+            responseType: 'blob'
+          });
+    }
 }

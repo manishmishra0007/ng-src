@@ -86,26 +86,13 @@
     <div class="form-row">
         <div class="form-group col">
             <label for="approver">Approver</label>   
-            <select formControlName="approver" class="form-control">
+            <select formControlName="approver" class="form-control-approver">
                 <option *ngFor="let approver of approvers"  
                     value={{approver.id}}>  
                     {{approver.firstName}}  
                 </option> 
             </select>                  
-        </div>   
-        <div class="form-group col">
-            <label for="filesuploaded">
-                List of Files uploaded
-            </label>            
-            <ul
-              class="list-group list-group-flush"
-              *ngFor="let file of fileInfos | async"
-            >
-              <li class="list-group-item">
-                <a href="{{ file.url }}">{{ file.name }}</a>
-              </li>
-            </ul>  
-        </div>              
+        </div>                       
     </div>  
     
     <div class="form-row">        
@@ -119,7 +106,20 @@
             <div *ngIf="submitted && f.serviceDescriptionName.errors" class="invalid-feedback">
                 <div *ngIf="f.serviceDescriptionName.errors.required">Service request description is required</div>
             </div>
-        </div>                      
+        </div> 
+        <div class="form-group col">
+            <label for="filesuploaded">
+                List of Files uploaded
+            </label>            
+            <ul
+              class="list-group"
+              *ngFor="let file of arrayOfAttachment"
+            >
+              <li class="list-group-item">
+                <a (click)="download(file)" href="javascript:void(0)">{{ file.fileName }}</a>
+              </li>
+            </ul>  
+        </div>                       
     </div>     
     <div class="form-row">
         <label class="btn btn-default">

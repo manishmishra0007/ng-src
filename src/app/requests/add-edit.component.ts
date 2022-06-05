@@ -78,7 +78,7 @@ export class AddEditComponent implements OnInit {
                     .subscribe(x => {
                         this.form.patchValue(x.find(x => x.transactionId.toString() == this.id));
                         this.arrayOfAttachment = x.find(x => x.transactionId.toString() == this.id).transactionAttachments;
-                        console.log(this.arrayOfAttachment);
+                        //console.log(this.arrayOfAttachment);
                     });
             }
 
@@ -236,5 +236,14 @@ export class AddEditComponent implements OnInit {
             });
         this.file = undefined;
 
+      }
+
+      download(file: TransactionAttachment): void { 
+        this.requestService.DownloadFile(file.fileURI)
+                    .pipe(first())
+                    .subscribe(blob => {
+                        const url= window.URL.createObjectURL(blob);
+                        window.open(url);
+                      })
       }
 }
