@@ -169,8 +169,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
 
         function basicDetailsRequests(request) {
-            const { id, memberid, onbehalfof, departmentid, servicerequestid, servicerequestname, servicerequestdescription, assignedto, isapprovalneeded, approver, status, datecreated } = request;
-            return { id, memberid, onbehalfof, departmentid, servicerequestid, servicerequestname, servicerequestdescription, assignedto, isapprovalneeded, approver, status, datecreated };
+            const { id, memberid, onbehalfof, departmentid, servicerequestid, servicerequestname, servicerequestdescription, assignedto, isapprovalneeded, approver, status, datecreated, transactionAttachments } = request;
+            return { id, memberid, onbehalfof, departmentid, servicerequestid, servicerequestname, servicerequestdescription, assignedto, isapprovalneeded, approver, status, datecreated, transactionAttachments };
         }
 
         function isLoggedIn() {

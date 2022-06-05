@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
 import { AccountService, AlertService, RequestService, UploadFileService } from '@app/_services';
-import { Status, Department, RequestTypes, Request, User } from '@app/_models';
+import { Status, Department, RequestTypes, Request, User, TransactionAttachment } from '@app/_models';
 import { Observable } from 'rxjs';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
@@ -29,6 +29,7 @@ export class AddEditComponent implements OnInit {
     message = '';
     fileInfos: Observable<any>;
     file: File = null;
+    arrayOfAttachment: TransactionAttachment[];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -64,56 +65,67 @@ export class AddEditComponent implements OnInit {
             createdBy: []
         });        
 
+        // On load making it empty
+        this.arrayOfAttachment = [];
+
         //Bind department dropdown
-        this.accountService.getDepartmentMaster()
-            .pipe(first())
-            .subscribe(res => {
-                this.departments = res; 
-              });
-              
-        //Bind status dropdown
-        this.requestService.getStatusMaster()
-            .pipe(first())
-            .subscribe(res => {
-                this.statuses = res; 
-              });
-
-        //Bind role dropdown
-        this.requestService.getRequestTypesMaster()
-            .pipe(first())
-            .subscribe(res => {
-                this.requestTypes = res; 
-              });
-
-        //Bind approver
-        this.accountService.getMemberByRoleType("4")
-        .pipe(first())
-        .subscribe(res => {
-            this.approvers = res; 
-        });
-
-        //Bind on behalf of 
-        this.accountService.getMemberByRoleType("2")
-        .pipe(first())
-        .subscribe(res => {
-            this.onBehalfOf = res; 
-        });
-
-        //Bind assignedTo 
-        this.accountService.getMemberByRoleType("3")
-        .pipe(first())
-        .subscribe(res => {
-            this.assignedTo = res; 
-        });
+        this.BindMasterData();
 
 
         if (!this.isAddMode) {
                 this.requestService.getById(this.id)
                     .pipe(first())
-                    .subscribe(x => this.form.patchValue(x.find(x => x.transactionId.toString() == this.id)));
+                    .subscribe(x => {
+                        this.form.patchValue(x.find(x => x.transactionId.toString() == this.id));
+                        this.arrayOfAttachment = x.find(x => x.transactionId.toString() == this.id).transactionAttachments;
+                        console.log(this.arrayOfAttachment);
+                    });
             }
 
         //this.fileInfos = this.uploadService.getFiles();
+    }
+
+    private BindMasterData() {
+        this.accountService.getDepartmentMaster()
+            .pipe(first())
+            .subscribe(res => {
+                this.departments = res;
+            });
+
+        //Bind status dropdown
+        this.requestService.getStatusMaster()
+            .pipe(first())
+            .subscribe(res => {
+                this.statuses = res;
+            });
+
+        //Bind role dropdown
+        this.requestService.getRequestTypesMaster()
+            .pipe(first())
+            .subscribe(res => {
+                this.requestTypes = res;
+            });
+
+        //Bind approver
+        this.accountService.getMemberByRoleType("4")
+            .pipe(first())
+            .subscribe(res => {
+                this.approvers = res;
+            });
+
+        //Bind on behalf of 
+        this.accountService.getMemberByRoleType("2")
+            .pipe(first())
+            .subscribe(res => {
+                this.onBehalfOf = res;
+            });
+
+        //Bind assignedTo 
+        this.accountService.getMemberByRoleType("3")
+            .pipe(first())
+            .subscribe(res => {
+                this.assignedTo = res;
+            });
     }
 
     // convenience getter for easy access to form fields
@@ -154,7 +166,8 @@ export class AddEditComponent implements OnInit {
             isApprovalNeeded : false, // TODO
             approver : request.approver,
             serviceDescriptionName : request.serviceDescriptionName,  
-            lastModifiedBy: parseInt(this.loggedInUserId) // TODO  
+            lastModifiedBy: parseInt(this.loggedInUserId), // TODO  
+            transactionAttachments: this.arrayOfAttachment
        }
 
         this.requestService.register(data as Request)
@@ -187,7 +200,8 @@ export class AddEditComponent implements OnInit {
             isApprovalNeeded : false, // TODO
             approver : request.approver,
             serviceDescriptionName : request.serviceDescriptionName,  
-            lastModifiedBy: request.memberId // TODO     
+            lastModifiedBy: request.memberId, // TODO  
+            transactionAttachments: this.arrayOfAttachment
        }
 
         this.requestService.update(this.id, data as Request)
@@ -205,16 +219,21 @@ export class AddEditComponent implements OnInit {
     }
 
     selectFile(event): void {        
-        this.file = event.target.files[0]          
+        this.file = event.target.files[0];
       }
 
       upload(): void {
 
         this.progress = 0; 
         this.uploadService.upload(this.file).subscribe(
-            resp => {
-                alert("Uploaded")
-              });
+            resp => {                
+            
+                let attachments: TransactionAttachment;
+                attachments = resp as TransactionAttachment;             
+                
+                this.arrayOfAttachment.push(attachments[0]);        
+              
+            });
         this.file = undefined;
 
       }

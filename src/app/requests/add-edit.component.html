@@ -125,7 +125,7 @@
         <label class="btn btn-default">
             <input type="file" id="formFile" (change)="selectFile($event)" />
           </label>
-          <button class="btn btn-success btn-sm" style="width: 75px;height: 30px;margin-top: 5px;" (click)="upload()">
+          <button type="button" class="btn btn-success btn-sm" style="width: 75px;height: 30px;margin-top: 5px;" (click)="upload()">
              Upload 
           </button>
           <div class="alert" role="alert">{{ message }}</div>

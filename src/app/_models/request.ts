@@ -1,3 +1,5 @@
+type NewType = TransactionAttachment;
+
 export class Request {    
     id: string;
     transactionId:number;
@@ -21,4 +23,14 @@ export class Request {
     dateModified:string;
     lastModifiedBy:number;
     createdBy:string;
+    transactionAttachments: NewType[];
+}
+
+export class TransactionAttachment
+{
+    fileExt: string;
+    fileId: string;
+    fileName: string;
+    fileURI: string;
+    isdeleted: boolean;
 }
